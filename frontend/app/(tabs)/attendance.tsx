@@ -206,15 +206,107 @@ export default function AttendanceScreen() {
     );
   }
 
-  // STUDENT VIEW - Only their own attendance (read-only)
+  // STUDENT VIEW - Only their own attendance (read-only) with summary table
   if (isStudent) {
+    // Calcola statistiche
+    const presenze = attendance.filter(a => a.stato === 'presente').length;
+    const assenze = attendance.filter(a => a.stato === 'assente' || a.stato === 'assenza_non_giustificata').length;
+    const assenzeGiustificate = attendance.filter(a => a.stato === 'assenza_giustificata').length;
+    const recuperi = attendance.filter(a => a.stato === 'recupero').length;
+    const totale = attendance.length;
+
     return (
       <View style={styles.container}>
         <View style={styles.headerSection}>
           <Text style={styles.sectionTitle}>Le tue Presenze</Text>
-          <Text style={styles.sectionSubtitle}>Storico delle tue presenze e assenze</Text>
+          <Text style={styles.sectionSubtitle}>Riepilogo e storico completo</Text>
         </View>
         
+        {/* Tabella Riepilogo */}
+        <View style={styles.summaryTable}>
+          <Text style={styles.tableTitle}>📊 Riepilogo Presenze</Text>
+          <View style={styles.tableContainer}>
+            <View style={styles.tableRow}>
+              <View style={[styles.tableCell, styles.tableCellHeader]}>
+                <Text style={styles.tableCellHeaderText}>Stato</Text>
+              </View>
+              <View style={[styles.tableCell, styles.tableCellHeader]}>
+                <Text style={styles.tableCellHeaderText}>Totale</Text>
+              </View>
+              <View style={[styles.tableCell, styles.tableCellHeader]}>
+                <Text style={styles.tableCellHeaderText}>%</Text>
+              </View>
+            </View>
+            
+            <View style={styles.tableRow}>
+              <View style={[styles.tableCell, { backgroundColor: '#D1FAE5' }]}>
+                <Ionicons name="checkmark-circle" size={16} color="#10B981" />
+                <Text style={[styles.tableCellText, { color: '#10B981', marginLeft: 4 }]}>Presenze</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableCellValue}>{presenze}</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableCellValue}>{totale > 0 ? Math.round((presenze/totale)*100) : 0}%</Text>
+              </View>
+            </View>
+            
+            <View style={styles.tableRow}>
+              <View style={[styles.tableCell, { backgroundColor: '#FEE2E2' }]}>
+                <Ionicons name="close-circle" size={16} color="#EF4444" />
+                <Text style={[styles.tableCellText, { color: '#EF4444', marginLeft: 4 }]}>Assenze</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableCellValue}>{assenze}</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableCellValue}>{totale > 0 ? Math.round((assenze/totale)*100) : 0}%</Text>
+              </View>
+            </View>
+            
+            <View style={styles.tableRow}>
+              <View style={[styles.tableCell, { backgroundColor: '#FEF3C7' }]}>
+                <Ionicons name="alert-circle" size={16} color="#F59E0B" />
+                <Text style={[styles.tableCellText, { color: '#F59E0B', marginLeft: 4 }]}>Giustificate</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableCellValue}>{assenzeGiustificate}</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableCellValue}>{totale > 0 ? Math.round((assenzeGiustificate/totale)*100) : 0}%</Text>
+              </View>
+            </View>
+            
+            <View style={styles.tableRow}>
+              <View style={[styles.tableCell, { backgroundColor: '#EDE9FE' }]}>
+                <Ionicons name="refresh" size={16} color="#8B5CF6" />
+                <Text style={[styles.tableCellText, { color: '#8B5CF6', marginLeft: 4 }]}>Recuperi</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableCellValue}>{recuperi}</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableCellValue}>{totale > 0 ? Math.round((recuperi/totale)*100) : 0}%</Text>
+              </View>
+            </View>
+            
+            <View style={[styles.tableRow, { backgroundColor: '#F1F5F9' }]}>
+              <View style={[styles.tableCell, { backgroundColor: '#E2E8F0' }]}>
+                <Ionicons name="calculator" size={16} color="#475569" />
+                <Text style={[styles.tableCellText, { color: '#475569', fontWeight: '700', marginLeft: 4 }]}>TOTALE</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={[styles.tableCellValue, { fontWeight: '700' }]}>{totale}</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={[styles.tableCellValue, { fontWeight: '700' }]}>100%</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+        
+        {/* Lista Storico */}
+        <Text style={styles.historyTitleStudent}>📅 Storico Completo</Text>
         <ScrollView 
           style={styles.listContainer}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
