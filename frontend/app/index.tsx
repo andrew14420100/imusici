@@ -466,6 +466,27 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '600',
   },
+  errorBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FEE2E2',
+    padding: 14,
+    borderRadius: 10,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#FECACA',
+  },
+  errorText: {
+    flex: 1,
+    fontSize: 14,
+    color: '#DC2626',
+    fontWeight: '600',
+    marginLeft: 10,
+  },
+  inputError: {
+    borderColor: '#DC2626',
+    borderWidth: 2,
+  },
   warningBox: {
     flexDirection: 'row',
     alignItems: 'flex-start',
