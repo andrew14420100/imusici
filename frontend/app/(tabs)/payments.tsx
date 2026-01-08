@@ -282,6 +282,85 @@ export default function PaymentsScreen() {
     );
   }
 
+  // For students: only show their own payments
+  if (isStudent) {
+    // Gli studenti vedono SOLO i propri pagamenti (già filtrati dal backend)
+    const studentPayments = payments.filter(p => p.tipo === 'mensile' || p.tipo === 'annuale');
+    
+    const totalToPay = studentPayments
+      .filter(p => p.stato !== 'pagato')
+      .reduce((sum, p) => sum + p.importo, 0);
+    
+    const totalPaidStudent = studentPayments
+      .filter(p => p.stato === 'pagato')
+      .reduce((sum, p) => sum + p.importo, 0);
+    
+    return (
+      <View style={styles.container}>
+        <View style={styles.headerSection}>
+          <Text style={styles.sectionTitle}>I miei Pagamenti</Text>
+        </View>
+        
+        {/* Riepilogo per studente */}
+        <View style={styles.summaryContainer}>
+          <View style={[styles.summaryCard, { backgroundColor: '#FEF3C7' }]}>
+            <Text style={styles.summaryLabel}>Da Pagare</Text>
+            <Text style={[styles.summaryValue, { color: '#F59E0B' }]}>
+              €{totalToPay.toFixed(2)}
+            </Text>
+          </View>
+          <View style={[styles.summaryCard, { backgroundColor: '#D1FAE5' }]}>
+            <Text style={styles.summaryLabel}>Pagato</Text>
+            <Text style={[styles.summaryValue, { color: '#10B981' }]}>
+              €{totalPaidStudent.toFixed(2)}
+            </Text>
+          </View>
+        </View>
+        
+        <ScrollView 
+          style={styles.listContainer}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        >
+          {studentPayments.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <Ionicons name="wallet-outline" size={48} color="#ccc" />
+              <Text style={styles.emptyText}>Nessun pagamento presente</Text>
+            </View>
+          ) : (
+            studentPayments.map(payment => {
+              const statusColors = getStatusColor(payment.stato);
+              return (
+                <View key={payment.id} style={styles.paymentCard}>
+                  <View style={styles.paymentHeader}>
+                    <View style={styles.paymentInfo}>
+                      <Text style={styles.paymentDesc}>{payment.descrizione}</Text>
+                      <Text style={styles.paymentDate}>
+                        Scadenza: {new Date(payment.data_scadenza).toLocaleDateString('it-IT')}
+                      </Text>
+                      {payment.data_pagamento && (
+                        <Text style={[styles.paymentDate, { color: '#10B981' }]}>
+                          ✓ Pagato il: {new Date(payment.data_pagamento).toLocaleDateString('it-IT')}
+                        </Text>
+                      )}
+                    </View>
+                    <View style={styles.paymentRight}>
+                      <Text style={styles.paymentAmount}>€{payment.importo.toFixed(2)}</Text>
+                      <View style={[styles.statusBadge, { backgroundColor: statusColors.bg }]}>
+                        <Text style={[styles.statusText, { color: statusColors.text }]}>
+                          {getStatusLabel(payment.stato)}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              );
+            })
+          )}
+        </ScrollView>
+      </View>
+    );
+  }
+
   // For teachers: only show their own compensation (Rimborso Spese)
   if (isTeacher) {
     const teacherPayments = payments.filter(p => p.tipo === 'compenso_insegnante');
