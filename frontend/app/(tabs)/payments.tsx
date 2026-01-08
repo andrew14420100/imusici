@@ -200,24 +200,51 @@ export default function PaymentsScreen() {
   };
 
   const handleMarkPaid = async (paymentId: string) => {
-    Alert.alert(
-      'Conferma',
-      'Vuoi segnare questo pagamento come pagato?',
-      [
-        { text: 'Annulla', style: 'cancel' },
-        { 
-          text: 'Conferma', 
-          onPress: async () => {
-            try {
-              console.log('Aggiornamento pagamento:', paymentId, 'stato:', 'pagato');
-              const updatedPayment = await paymentsApi.update(paymentId, { stato: 'pagato' });
-              console.log('Risposta server:', updatedPayment);
-              
-              // Aggiorna lo stato locale immediatamente
-              setPayments(prevPayments => 
-                prevPayments.map(p => 
-                  p.id === paymentId ? { ...p, stato: 'pagato', data_pagamento: new Date().toISOString() } : p
-                )
+    // Su web, Alert.alert potrebbe non funzionare - usiamo confirm
+    const confirmAction = () => {
+      if (typeof window !== 'undefined' && window.confirm) {
+        return window.confirm('Vuoi segnare questo pagamento come pagato?');
+      }
+      return true; // Su mobile, procede con Alert dopo
+    };
+
+    const performUpdate = async () => {
+      try {
+        console.log('Aggiornamento pagamento:', paymentId, 'stato:', 'pagato');
+        const updatedPayment = await paymentsApi.update(paymentId, { stato: 'pagato' });
+        console.log('Risposta server:', updatedPayment);
+        
+        // Aggiorna lo stato locale immediatamente
+        setPayments(prevPayments => 
+          prevPayments.map(p => 
+            p.id === paymentId ? { ...p, stato: 'pagato', data_pagamento: new Date().toISOString() } : p
+          )
+        );
+        
+        Alert.alert('✅ Successo', 'Pagamento segnato come PAGATO');
+      } catch (error: any) {
+        console.error('Errore aggiornamento pagamento:', error);
+        const errorMsg = error.response?.data?.detail || error.message || 'Si è verificato un errore durante l\'aggiornamento';
+        Alert.alert('❌ Errore', errorMsg);
+      }
+    };
+
+    // Su web usa confirm, su mobile usa Alert.alert
+    if (typeof window !== 'undefined' && window.confirm) {
+      if (confirmAction()) {
+        await performUpdate();
+      }
+    } else {
+      Alert.alert(
+        'Conferma',
+        'Vuoi segnare questo pagamento come pagato?',
+        [
+          { text: 'Annulla', style: 'cancel' },
+          { text: 'Conferma', onPress: performUpdate }
+        ]
+      );
+    }
+  };
               );
               
               Alert.alert('✅ Successo', 'Pagamento segnato come PAGATO');
