@@ -1,31 +1,21 @@
 import React from 'react';
-import { Tabs } from 'expo-router';
+import { Tabs, Redirect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { UserRole } from '../../src/types';
 import { View, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
-import { router } from 'expo-router';
 
 export default function TabsLayout() {
   const { user, isLoading, isInitialized, isAuthenticated, logout } = useAuth();
-  const isLoggingOutRef = React.useRef(false);
-
-  // Redirect gestito tramite router guards, non tramite useEffect
-  // per evitare loop infiniti di redirect
 
   const handleLogout = async () => {
     console.log('Logout initiated...');
-    isLoggingOutRef.current = true;
     try {
       await logout();
     } catch (error) {
       console.error('Logout error:', error);
     }
-    // Redirect dopo che il componente è smontato
-    // Usa un delay minimo per permettere al logout di completarsi
-    requestAnimationFrame(() => {
-      router.push('/');
-    });
+    // Non fare redirect qui - sarà gestito dal Redirect component
   };
 
   if (isLoading || !isInitialized) {
@@ -36,10 +26,10 @@ export default function TabsLayout() {
     );
   }
 
-  if (!isAuthenticated && !isLoggingOutRef.current) {
-    // Mostra loading se non autenticato
-    // Il redirect viene gestito esplicitamente
-    return null;
+  if (!isAuthenticated) {
+    // Usa Redirect component invece di router.replace
+    // Questo evita i loop di render
+    return <Redirect href="/" />;
   }
 
   const isAdmin = user?.ruolo === 'amministratore';
