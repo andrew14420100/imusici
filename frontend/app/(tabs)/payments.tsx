@@ -245,19 +245,6 @@ export default function PaymentsScreen() {
       );
     }
   };
-              );
-              
-              Alert.alert('✅ Successo', 'Pagamento segnato come PAGATO');
-            } catch (error: any) {
-              console.error('Errore aggiornamento pagamento:', error);
-              const errorMsg = error.response?.data?.detail || error.message || 'Si è verificato un errore durante l\'aggiornamento';
-              Alert.alert('❌ Errore', errorMsg);
-            }
-          }
-        },
-      ]
-    );
-  };
 
   const openDeleteModal = (payment: Payment) => {
     setPaymentToDelete(payment);
