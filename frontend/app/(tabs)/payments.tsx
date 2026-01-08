@@ -47,6 +47,7 @@ export default function PaymentsScreen() {
 
   const isAdmin = currentUser?.ruolo === 'amministratore';
   const isTeacher = currentUser?.ruolo === 'insegnante';
+  const isStudent = currentUser?.ruolo === 'allievo';
 
   const fetchData = async () => {
     try {
@@ -58,6 +59,7 @@ export default function PaymentsScreen() {
       setUsers(usersData);
     } catch (error) {
       console.error('Error fetching data:', error);
+      Alert.alert('❌ Errore', 'Impossibile caricare i pagamenti. Riprova.');
     } finally {
       setLoading(false);
     }
