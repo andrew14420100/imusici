@@ -3,21 +3,36 @@ import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { UserRole } from '../../src/types';
-import { View, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 
 export default function TabsLayout() {
-  const { user, isLoading, isInitialized, isAuthenticated, logout } = useAuth();
+  const { user, isLoading, isInitialized, logout } = useAuth();
 
   const handleLogout = () => {
-    console.log('Logout initiated...');
-    // Non usare async/await - fai tutto in modo sincrono
-    logout().catch(err => console.error('Logout error:', err));
-    // Reload immediatamente senza aspettare
-    if (typeof window !== 'undefined') {
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 50);
-    }
+    Alert.alert(
+      'Conferma Logout',
+      'Sei sicuro di voler uscire?',
+      [
+        {
+          text: 'Annulla',
+          style: 'cancel'
+        },
+        {
+          text: 'Esci',
+          onPress: async () => {
+            try {
+              await logout();
+            } catch (error) {
+              console.error('Logout error:', error);
+            }
+            // Hard reload della pagina
+            if (typeof window !== 'undefined') {
+              window.location.href = '/';
+            }
+          }
+        }
+      ]
+    );
   };
 
   if (isLoading || !isInitialized) {
@@ -28,10 +43,8 @@ export default function TabsLayout() {
     );
   }
 
-  // Se non autenticato, non renderizzare nulla
-  if (!isAuthenticated) {
-    return null;
-  }
+  // NON controllare isAuthenticated qui - lascia renderizzare sempre
+  // Il redirect avviene tramite window.location.href che bypassa React
 
   const isAdmin = user?.ruolo === 'amministratore';
 
