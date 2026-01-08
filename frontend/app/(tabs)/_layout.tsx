@@ -3,36 +3,43 @@ import { Tabs, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { UserRole } from '../../src/types';
-import { View, ActivityIndicator, StyleSheet, TouchableOpacity, Alert, Text } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, TouchableOpacity, Alert, Text, Platform } from 'react-native';
 
 export default function TabsLayout() {
   const { user, isLoading, isInitialized, logout } = useAuth();
 
-  const handleLogout = () => {
-    Alert.alert(
-      'Conferma Logout',
-      'Sei sicuro di voler uscire?',
-      [
-        { text: 'Annulla', style: 'cancel' },
-        { 
-          text: 'Esci', 
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await logout();
-              // Redirect alla pagina di login
-              if (typeof window !== 'undefined') {
-                window.location.href = '/';
-              } else {
-                router.replace('/');
-              }
-            } catch (error) {
-              console.error('Logout error:', error);
-            }
-          }
+  const handleLogout = async () => {
+    // Su web usa window.confirm, su mobile usa Alert
+    const isWeb = Platform.OS === 'web';
+    
+    const doLogout = async () => {
+      try {
+        await logout();
+        // Redirect alla pagina di login
+        if (typeof window !== 'undefined') {
+          window.location.href = '/';
+        } else {
+          router.replace('/');
         }
-      ]
-    );
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
+    };
+
+    if (isWeb) {
+      if (window.confirm('Sei sicuro di voler uscire?')) {
+        await doLogout();
+      }
+    } else {
+      Alert.alert(
+        'Conferma Logout',
+        'Sei sicuro di voler uscire?',
+        [
+          { text: 'Annulla', style: 'cancel' },
+          { text: 'Esci', style: 'destructive', onPress: doLogout }
+        ]
+      );
+    }
   };
 
   if (isLoading || !isInitialized) {
