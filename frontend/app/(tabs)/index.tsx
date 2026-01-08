@@ -211,26 +211,46 @@ export default function DashboardScreen() {
               • <Text style={styles.bold}>Avvisi</Text> - Notifiche e comunicazioni
             </Text>
           </View>
+          
+          {/* Logout Button for Non-Admin */}
+          <View style={styles.logoutSection}>
+            <TouchableOpacity 
+              style={styles.logoutButton}
+              onPress={() => {
+                if (typeof window !== 'undefined') {
+                  window.location.href = '/';
+                }
+              }}
+            >
+              <Ionicons name="log-out-outline" size={20} color="#fff" />
+              <Text style={styles.logoutButtonText}>Esci</Text>
+            </TouchableOpacity>
+            <Text style={styles.logoutHint}>
+              Effettua il logout per tornare alla pagina di accesso
+            </Text>
+          </View>
         </View>
       )}
 
-      {/* Logout Button */}
-      <View style={styles.logoutSection}>
-        <TouchableOpacity 
-          style={styles.logoutButton}
-          onPress={() => {
-            if (typeof window !== 'undefined') {
-              window.location.href = '/';
-            }
-          }}
-        >
-          <Ionicons name="log-out-outline" size={20} color="#fff" />
-          <Text style={styles.logoutButtonText}>Esci</Text>
-        </TouchableOpacity>
-        <Text style={styles.logoutHint}>
-          Effettua il logout per tornare alla pagina di accesso
-        </Text>
-      </View>
+      {/* Logout Button for Admin */}
+      {user?.ruolo === 'amministratore' && (
+        <View style={styles.logoutSection}>
+          <TouchableOpacity 
+            style={styles.logoutButton}
+            onPress={() => {
+              if (typeof window !== 'undefined') {
+                window.location.href = '/';
+              }
+            }}
+          >
+            <Ionicons name="log-out-outline" size={20} color="#fff" />
+            <Text style={styles.logoutButtonText}>Esci</Text>
+          </TouchableOpacity>
+          <Text style={styles.logoutHint}>
+            Effettua il logout per tornare alla pagina di accesso
+          </Text>
+        </View>
+      )}
 
       <View style={{ height: 30 }} />
     </ScrollView>
