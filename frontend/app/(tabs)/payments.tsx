@@ -187,11 +187,22 @@ export default function PaymentsScreen() {
           text: 'Conferma', 
           onPress: async () => {
             try {
-              await paymentsApi.update(paymentId, { stato: PaymentStatus.PAID });
-              Alert.alert('Successo', 'Pagamento segnato come pagato');
-              fetchData();
+              console.log('Aggiornamento pagamento:', paymentId, 'stato:', 'pagato');
+              const updatedPayment = await paymentsApi.update(paymentId, { stato: 'pagato' });
+              console.log('Risposta server:', updatedPayment);
+              
+              // Aggiorna lo stato locale immediatamente
+              setPayments(prevPayments => 
+                prevPayments.map(p => 
+                  p.id === paymentId ? { ...p, stato: 'pagato', data_pagamento: new Date().toISOString() } : p
+                )
+              );
+              
+              Alert.alert('✅ Successo', 'Pagamento segnato come PAGATO');
             } catch (error: any) {
-              Alert.alert('Errore', error.response?.data?.detail || 'Si è verificato un errore');
+              console.error('Errore aggiornamento pagamento:', error);
+              const errorMsg = error.response?.data?.detail || error.message || 'Si è verificato un errore durante l\'aggiornamento';
+              Alert.alert('❌ Errore', errorMsg);
             }
           }
         },
