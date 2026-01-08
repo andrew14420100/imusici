@@ -1771,7 +1771,13 @@ async def update_payment(payment_id: str, request: Request):
     """Update payment (Admin only)"""
     await require_admin(request)
     
+    # Verifica che il pagamento esista
+    existing = await db.pagamenti.find_one({"id": payment_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Pagamento non trovato")
+    
     body = await request.json()
+    logger.info(f"Aggiornamento pagamento {payment_id}: {body}")
     
     update_dict = {}
     if "importo" in body:
@@ -1782,15 +1788,18 @@ async def update_payment(payment_id: str, request: Request):
         update_dict["data_scadenza"] = datetime.fromisoformat(body["data_scadenza"])
     if "stato" in body:
         update_dict["stato"] = body["stato"]
+        # Se lo stato diventa "pagato", imposta automaticamente la data di pagamento
+        if body["stato"] == PaymentStatus.PAID.value:
+            update_dict["data_pagamento"] = datetime.now(timezone.utc)
+            logger.info(f"Pagamento {payment_id} segnato come PAGATO")
     if "visibile_utente" in body:
         update_dict["visibile_utente"] = body["visibile_utente"]
     
     if update_dict:
-        await db.pagamenti.update_one({"id": payment_id}, {"$set": update_dict})
+        result = await db.pagamenti.update_one({"id": payment_id}, {"$set": update_dict})
+        logger.info(f"Update result: modified_count={result.modified_count}")
     
     payment = await db.pagamenti.find_one({"id": payment_id}, {"_id": 0})
-    if not payment:
-        raise HTTPException(status_code=404, detail="Pagamento non trovato")
     return payment
 
 @api_router.delete("/pagamenti/{payment_id}")
