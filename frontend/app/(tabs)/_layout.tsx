@@ -8,7 +8,7 @@ import { View, ActivityIndicator, StyleSheet, TouchableOpacity, Alert } from 're
 export default function TabsLayout() {
   const { user, isLoading, isInitialized, logout } = useAuth();
 
-  const handleLogout = () => {
+  const handleLogout = React.useCallback(() => {
     Alert.alert(
       'Conferma Logout',
       'Sei sicuro di voler uscire?',
@@ -33,7 +33,16 @@ export default function TabsLayout() {
         }
       ]
     );
-  };
+  }, [logout]);
+
+  const HeaderRight = React.useCallback(() => (
+    <TouchableOpacity 
+      onPress={handleLogout} 
+      style={{ marginRight: 16 }}
+    >
+      <Ionicons name="log-out-outline" size={24} color="#fff" />
+    </TouchableOpacity>
+  ), [handleLogout]);
 
   if (isLoading || !isInitialized) {
     return (
