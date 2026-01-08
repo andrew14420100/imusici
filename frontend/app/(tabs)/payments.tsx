@@ -238,13 +238,19 @@ export default function PaymentsScreen() {
   const confirmDelete = async () => {
     if (!paymentToDelete) return;
     try {
+      console.log('Eliminazione pagamento:', paymentToDelete.id);
       await paymentsApi.delete(paymentToDelete.id);
+      
+      // Rimuovi dallo stato locale
+      setPayments(prevPayments => prevPayments.filter(p => p.id !== paymentToDelete.id));
+      
       setDeleteModalVisible(false);
       setPaymentToDelete(null);
-      Alert.alert('Eliminato!', 'Il pagamento è stato rimosso');
-      fetchData();
+      Alert.alert('✅ Eliminato!', 'Il pagamento è stato rimosso correttamente');
     } catch (error: any) {
-      Alert.alert('Errore', error.response?.data?.detail || 'Si è verificato un errore');
+      console.error('Errore eliminazione:', error);
+      const errorMsg = error.response?.data?.detail || error.message || 'Si è verificato un errore durante l\'eliminazione';
+      Alert.alert('❌ Errore', errorMsg);
     }
   };
 
