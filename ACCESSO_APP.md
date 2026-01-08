@@ -3,10 +3,10 @@
 ## 🌐 URL DELL'APPLICAZIONE
 
 **URL Web (Desktop/Mobile):**
-https://accademia-login.preview.emergentagent.com
+https://payment-fix-41.preview.emergentagent.com
 
 **Backend API:**
-https://accademia-login.preview.emergentagent.com/api
+https://payment-fix-41.preview.emergentagent.com/api
 
 ---
 
@@ -59,7 +59,7 @@ https://accademia-login.preview.emergentagent.com/api
 
 ## 📱 COME ACCEDERE
 
-1. Apri il browser e vai su: https://accademia-login.preview.emergentagent.com
+1. Apri il browser e vai su: https://payment-fix-41.preview.emergentagent.com
 2. Seleziona il tipo di utente (Amministratore/Insegnante/Allievo)
 3. Inserisci email e password
 4. Clicca su "Accedi"
