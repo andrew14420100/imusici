@@ -47,7 +47,10 @@ export default function LandingPage() {
     const result = await loginWithCredentials(email, password);
     setIsSubmitting(false);
     
-    if (!result.success) {
+    if (result.success) {
+      // Redirect manuale dopo login riuscito
+      router.replace('/(tabs)');
+    } else {
       Alert.alert('Errore', result.error || 'Login fallito');
     }
   };
