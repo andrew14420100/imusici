@@ -10,26 +10,18 @@ export default function TabsLayout() {
 
   const handleLogout = async () => {
     console.log('Logout initiated...');
-    try {
-      await logout();
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-    // Non fare redirect qui - sarà gestito dal Redirect component
+    await logout();
+    // Il redirect sarà gestito dal root layout
   };
 
+  // Non fare alcun controllo di autenticazione qui
+  // Lascia che sia il root layout a gestirlo
   if (isLoading || !isInitialized) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#4A90D9" />
       </View>
     );
-  }
-
-  if (!isAuthenticated) {
-    // Usa Redirect component invece di router.replace
-    // Questo evita i loop di render
-    return <Redirect href="/" />;
   }
 
   const isAdmin = user?.ruolo === 'amministratore';
