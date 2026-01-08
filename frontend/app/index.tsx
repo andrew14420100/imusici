@@ -33,13 +33,16 @@ export default function LandingPage() {
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState<string>('');
 
   // Redirect gestito automaticamente dal router dopo il login
   // Non serve useEffect qui per evitare loop infiniti
 
   const handleLogin = async () => {
+    setLoginError('');
+    
     if (!email || !password) {
-      Alert.alert('Errore', 'Inserisci email e password');
+      setLoginError('Inserisci email e password');
       return;
     }
     
@@ -51,13 +54,14 @@ export default function LandingPage() {
       // Redirect manuale dopo login riuscito
       router.replace('/(tabs)');
     } else {
-      Alert.alert('Errore', result.error || 'Login fallito');
+      setLoginError(result.error || 'Email o password non validi');
     }
   };
 
   const selectRoleAndLogin = (role: SelectedRole) => {
     setSelectedRole(role);
     setEmail('');
+    setLoginError('');
     setPassword('');
     setLoginMode('login');
   };
