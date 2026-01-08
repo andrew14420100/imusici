@@ -134,46 +134,66 @@ export default function PaymentsScreen() {
     setErrorMessage('');
     
     if (!formData.utente_id) {
-      setErrorMessage('Seleziona un utente');
+      setErrorMessage('⚠️ Seleziona un utente');
+      Alert.alert('❌ Errore', 'Seleziona un utente');
       return;
     }
     if (!formData.importo || parseFloat(formData.importo) <= 0) {
-      setErrorMessage('Importo non valido - inserisci un numero maggiore di 0');
+      setErrorMessage('⚠️ Importo non valido - inserisci un numero maggiore di 0');
+      Alert.alert('❌ Errore', 'Importo non valido - inserisci un numero maggiore di 0');
       return;
     }
     if (!formData.descrizione.trim()) {
-      setErrorMessage('La descrizione è obbligatoria');
+      setErrorMessage('⚠️ La descrizione è obbligatoria');
+      Alert.alert('❌ Errore', 'La descrizione è obbligatoria');
       return;
     }
     if (!formData.data_scadenza) {
-      setErrorMessage('La data di scadenza è obbligatoria');
+      setErrorMessage('⚠️ La data di scadenza è obbligatoria');
+      Alert.alert('❌ Errore', 'La data di scadenza è obbligatoria');
       return;
     }
     
     try {
+      console.log('Salvataggio pagamento...', formData);
+      
       if (editingPayment) {
-        await paymentsApi.update(editingPayment.id, {
+        const updated = await paymentsApi.update(editingPayment.id, {
           importo: parseFloat(formData.importo),
           descrizione: formData.descrizione,
           data_scadenza: formData.data_scadenza,
         });
-        Alert.alert('Successo', 'Pagamento aggiornato');
+        console.log('Pagamento aggiornato:', updated);
+        
+        // Aggiorna stato locale
+        setPayments(prevPayments => 
+          prevPayments.map(p => 
+            p.id === editingPayment.id ? { ...p, ...updated } : p
+          )
+        );
+        
+        Alert.alert('✅ Successo', 'Pagamento aggiornato correttamente');
       } else {
-        await paymentsApi.create({
+        const newPayment = await paymentsApi.create({
           utente_id: formData.utente_id,
           tipo: formData.tipo,
           importo: parseFloat(formData.importo),
           descrizione: formData.descrizione,
           data_scadenza: formData.data_scadenza,
         });
-        Alert.alert('Successo', 'Pagamento creato');
+        console.log('Nuovo pagamento creato:', newPayment);
+        
+        // Aggiungi al stato locale
+        setPayments(prevPayments => [...prevPayments, newPayment]);
+        
+        Alert.alert('✅ Successo', 'Pagamento creato correttamente');
       }
       setModalVisible(false);
-      fetchData();
     } catch (error: any) {
-      const msg = error.response?.data?.detail || 'Si è verificato un errore durante il salvataggio';
-      setErrorMessage(msg);
-      Alert.alert('Errore', msg);
+      console.error('Errore salvataggio:', error);
+      const msg = error.response?.data?.detail || error.message || 'Si è verificato un errore durante il salvataggio';
+      setErrorMessage(`❌ ${msg}`);
+      Alert.alert('❌ Errore', msg);
     }
   };
 
