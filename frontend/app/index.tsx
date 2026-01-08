@@ -34,11 +34,8 @@ export default function LandingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  useEffect(() => {
-    if (isAuthenticated && user) {
-      router.replace('/(tabs)');
-    }
-  }, [isAuthenticated, user]);
+  // Redirect gestito automaticamente dal router dopo il login
+  // Non serve useEffect qui per evitare loop infiniti
 
   const handleLogin = async () => {
     if (!email || !password) {
