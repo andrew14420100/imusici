@@ -184,14 +184,22 @@ export default function LandingPage() {
         </View>
 
         <View style={styles.form}>
+          {/* Messaggio di errore rosso */}
+          {loginError ? (
+            <View style={styles.errorBox}>
+              <Ionicons name="alert-circle" size={20} color="#DC2626" />
+              <Text style={styles.errorText}>{loginError}</Text>
+            </View>
+          ) : null}
+
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>Email</Text>
-            <View style={styles.inputContainer}>
-              <Ionicons name="mail" size={20} color="#999" style={styles.inputIcon} />
+            <View style={[styles.inputContainer, loginError && styles.inputError]}>
+              <Ionicons name="mail" size={20} color={loginError ? "#DC2626" : "#999"} style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 value={email}
-                onChangeText={setEmail}
+                onChangeText={(text) => { setEmail(text); setLoginError(''); }}
                 placeholder="email@esempio.it"
                 keyboardType="email-address"
                 autoCapitalize="none"
@@ -202,12 +210,12 @@ export default function LandingPage() {
 
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>Password</Text>
-            <View style={styles.inputContainer}>
-              <Ionicons name="lock-closed" size={20} color="#999" style={styles.inputIcon} />
+            <View style={[styles.inputContainer, loginError && styles.inputError]}>
+              <Ionicons name="lock-closed" size={20} color={loginError ? "#DC2626" : "#999"} style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 value={password}
-                onChangeText={setPassword}
+                onChangeText={(text) => { setPassword(text); setLoginError(''); }}
                 placeholder="Password"
                 secureTextEntry={!showPassword}
                 autoComplete="password"
