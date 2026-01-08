@@ -14,9 +14,17 @@ export default function TabsLayout() {
 
   const handleLogout = async () => {
     console.log('Logout initiated...');
-    await logout();
-    // Redirect manuale dopo logout
-    router.replace('/');
+    try {
+      await logout();
+      // Usa setTimeout per evitare che il redirect avvenga durante il render
+      setTimeout(() => {
+        router.replace('/');
+      }, 100);
+    } catch (error) {
+      console.error('Logout error:', error);
+      // In caso di errore, forza comunque il redirect
+      router.replace('/');
+    }
   };
 
   if (isLoading || !isInitialized) {
