@@ -395,4 +395,31 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#333',
   },
+  logoutSection: {
+    padding: 16,
+    alignItems: 'center',
+  },
+  logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FF3B30',
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    borderRadius: 8,
+    gap: 8,
+    width: '100%',
+    maxWidth: 300,
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  logoutHint: {
+    fontSize: 12,
+    color: '#999',
+    marginTop: 8,
+    textAlign: 'center',
+  },
 });
