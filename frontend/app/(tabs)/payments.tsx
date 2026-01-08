@@ -257,6 +257,31 @@ export default function PaymentsScreen() {
   // For teachers: only show their own compensation (Rimborso Spese)
   if (isTeacher) {
     const teacherPayments = payments.filter(p => p.tipo === 'compenso_insegnante');
+    
+    const handleTeacherMarkPaid = async (paymentId: string) => {
+      Alert.alert(
+        'Conferma',
+        'Vuoi segnare questo rimborso come pagato?',
+        [
+          { text: 'Annulla', style: 'cancel' },
+          { 
+            text: 'Conferma', 
+            onPress: async () => {
+              try {
+                console.log('Aggiornamento rimborso:', paymentId);
+                // Nota: Gli insegnanti non possono modificare direttamente
+                // Questo è solo per visualizzazione - l'admin deve farlo
+                Alert.alert('ℹ️ Info', 'Solo l\'amministratore può segnare i rimborsi come pagati. Contatta l\'amministrazione.');
+              } catch (error: any) {
+                console.error('Errore:', error);
+                Alert.alert('❌ Errore', error.message || 'Si è verificato un errore');
+              }
+            }
+          },
+        ]
+      );
+    };
+    
     return (
       <View style={styles.container}>
         <View style={styles.headerSection}>
@@ -282,6 +307,11 @@ export default function PaymentsScreen() {
                       <Text style={styles.paymentDate}>
                         Scadenza: {new Date(payment.data_scadenza).toLocaleDateString('it-IT')}
                       </Text>
+                      {payment.data_pagamento && (
+                        <Text style={[styles.paymentDate, { color: '#10B981' }]}>
+                          ✓ Pagato il: {new Date(payment.data_pagamento).toLocaleDateString('it-IT')}
+                        </Text>
+                      )}
                     </View>
                     <View style={styles.paymentRight}>
                       <Text style={styles.paymentAmount}>€{payment.importo.toFixed(2)}</Text>
