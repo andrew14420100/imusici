@@ -1,12 +1,39 @@
 import React from 'react';
-import { Tabs } from 'expo-router';
+import { Tabs, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { UserRole } from '../../src/types';
-import { View, ActivityIndicator, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, TouchableOpacity, Alert, Text } from 'react-native';
 
 export default function TabsLayout() {
   const { user, isLoading, isInitialized, logout } = useAuth();
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Conferma Logout',
+      'Sei sicuro di voler uscire?',
+      [
+        { text: 'Annulla', style: 'cancel' },
+        { 
+          text: 'Esci', 
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await logout();
+              // Redirect alla pagina di login
+              if (typeof window !== 'undefined') {
+                window.location.href = '/';
+              } else {
+                router.replace('/');
+              }
+            } catch (error) {
+              console.error('Logout error:', error);
+            }
+          }
+        }
+      ]
+    );
+  };
 
   if (isLoading || !isInitialized) {
     return (
@@ -44,7 +71,11 @@ export default function TabsLayout() {
         headerTitleStyle: {
           fontWeight: '600',
         },
-        // RIMOSSO headerRight per evitare il loop infinito
+        headerRight: () => (
+          <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+            <Ionicons name="log-out-outline" size={22} color="#fff" />
+          </TouchableOpacity>
+        ),
       }}
     >
       <Tabs.Screen
@@ -115,5 +146,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F8FAFC',
+  },
+  logoutButton: {
+    marginRight: 16,
+    padding: 8,
   },
 });
