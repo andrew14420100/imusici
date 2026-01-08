@@ -72,7 +72,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const loginWithCredentials = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
       console.log('Attempting login for:', email);
-      const response = await authApi.login(email, password);
+      
+      // Aggiungo timeout di 10 secondi per evitare loop infiniti
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('Timeout: il server non risponde')), 10000);
+      });
+      
+      const loginPromise = authApi.login(email, password);
+      const response = await Promise.race([loginPromise, timeoutPromise]);
       
       if (response.token) {
         await AsyncStorage.setItem('session_token', response.token);
@@ -83,9 +90,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return { success: false, error: 'Token non ricevuto' };
     } catch (error: any) {
       console.error('Login error:', error.response?.data || error.message);
+      const errorMessage = error.message === 'Timeout: il server non risponde' 
+        ? 'Il server non risponde. Verifica la connessione.'
+        : error.response?.data?.detail || 'Credenziali non valide o errore di connessione';
       return { 
         success: false, 
-        error: error.response?.data?.detail || 'Errore durante il login' 
+        error: errorMessage
       };
     }
   };
