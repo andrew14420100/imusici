@@ -8,42 +8,6 @@ import { View, ActivityIndicator, StyleSheet, TouchableOpacity, Alert } from 're
 export default function TabsLayout() {
   const { user, isLoading, isInitialized, logout } = useAuth();
 
-  const handleLogout = React.useCallback(() => {
-    Alert.alert(
-      'Conferma Logout',
-      'Sei sicuro di voler uscire?',
-      [
-        {
-          text: 'Annulla',
-          style: 'cancel'
-        },
-        {
-          text: 'Esci',
-          onPress: async () => {
-            try {
-              await logout();
-            } catch (error) {
-              console.error('Logout error:', error);
-            }
-            // Hard reload della pagina
-            if (typeof window !== 'undefined') {
-              window.location.href = '/';
-            }
-          }
-        }
-      ]
-    );
-  }, [logout]);
-
-  const HeaderRight = React.useCallback(() => (
-    <TouchableOpacity 
-      onPress={handleLogout} 
-      style={{ marginRight: 16 }}
-    >
-      <Ionicons name="log-out-outline" size={24} color="#fff" />
-    </TouchableOpacity>
-  ), [handleLogout]);
-
   if (isLoading || !isInitialized) {
     return (
       <View style={styles.loadingContainer}>
@@ -80,7 +44,7 @@ export default function TabsLayout() {
         headerTitleStyle: {
           fontWeight: '600',
         },
-        headerRight: HeaderRight,
+        // RIMOSSO headerRight per evitare il loop infinito
       }}
     >
       <Tabs.Screen
