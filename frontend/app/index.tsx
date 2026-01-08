@@ -35,8 +35,13 @@ export default function LandingPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState<string>('');
 
-  // Redirect gestito automaticamente dal router dopo il login
-  // Non serve useEffect qui per evitare loop infiniti
+  // Se l'utente è già autenticato, redirect alla home
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && user) {
+      console.log('User already authenticated, redirecting to tabs');
+      router.replace('/(tabs)');
+    }
+  }, [isLoading, isAuthenticated, user]);
 
   const handleLogin = async () => {
     setLoginError('');
