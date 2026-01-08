@@ -9,13 +9,8 @@ import { router } from 'expo-router';
 export default function TabsLayout() {
   const { user, isLoading, isInitialized, isAuthenticated, logout } = useAuth();
 
-  // Handle logout redirect
-  useEffect(() => {
-    if (isInitialized && !isAuthenticated) {
-      console.log('Not authenticated, redirecting to login...');
-      router.replace('/');
-    }
-  }, [isInitialized, isAuthenticated]);
+  // Redirect gestito tramite router guards, non tramite useEffect
+  // per evitare loop infiniti di redirect
 
   const handleLogout = async () => {
     console.log('Logout initiated...');
