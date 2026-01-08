@@ -8,23 +8,24 @@ import { router } from 'expo-router';
 
 export default function TabsLayout() {
   const { user, isLoading, isInitialized, isAuthenticated, logout } = useAuth();
+  const isLoggingOutRef = React.useRef(false);
 
   // Redirect gestito tramite router guards, non tramite useEffect
   // per evitare loop infiniti di redirect
 
   const handleLogout = async () => {
     console.log('Logout initiated...');
+    isLoggingOutRef.current = true;
     try {
-      // Prima effettua il logout
       await logout();
-      // Usa router.replace invece di window.location.href
-      // Questo è compatibile con Expo Router
-      router.replace('/');
     } catch (error) {
       console.error('Logout error:', error);
-      // In caso di errore, forza comunque il redirect
-      router.replace('/');
     }
+    // Redirect dopo che il componente è smontato
+    // Usa un delay minimo per permettere al logout di completarsi
+    requestAnimationFrame(() => {
+      router.push('/');
+    });
   };
 
   if (isLoading || !isInitialized) {
@@ -35,7 +36,7 @@ export default function TabsLayout() {
     );
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated && !isLoggingOutRef.current) {
     // Mostra loading se non autenticato
     // Il redirect viene gestito esplicitamente
     return null;
