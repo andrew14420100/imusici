@@ -15,7 +15,7 @@ export default function TabsLayout() {
   const handleLogout = async () => {
     console.log('Logout initiated...');
     await logout();
-    // Force redirect to login page
+    // Redirect manuale dopo logout
     router.replace('/');
   };
 
