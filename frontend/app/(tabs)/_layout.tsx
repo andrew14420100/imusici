@@ -8,30 +8,26 @@ import { router } from 'expo-router';
 
 export default function TabsLayout() {
   const { user, isLoading, isInitialized, isAuthenticated, logout } = useAuth();
-  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
 
   // Redirect gestito tramite router guards, non tramite useEffect
   // per evitare loop infiniti di redirect
 
   const handleLogout = async () => {
     console.log('Logout initiated...');
-    setIsLoggingOut(true);
     try {
+      // Prima effettua il logout
       await logout();
-      // Usa setTimeout per evitare che il redirect avvenga durante il render
-      setTimeout(() => {
-        setIsLoggingOut(false);
-        router.replace('/');
-      }, 100);
     } catch (error) {
       console.error('Logout error:', error);
-      setIsLoggingOut(false);
-      // In caso di errore, forza comunque il redirect
-      router.replace('/');
     }
+    // Poi fai il redirect dopo un piccolo delay
+    // Questo evita che il redirect avvenga durante il ciclo di render
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 50);
   };
 
-  if (isLoading || !isInitialized || isLoggingOut) {
+  if (isLoading || !isInitialized) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#4A90D9" />
@@ -40,13 +36,9 @@ export default function TabsLayout() {
   }
 
   if (!isAuthenticated) {
-    // Invece di fare redirect, mostriamo un messaggio
-    // Il logout gestirà il redirect manualmente
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#4A90D9" />
-      </View>
-    );
+    // Mostra loading se non autenticato
+    // Il redirect viene gestito esplicitamente
+    return null;
   }
 
   const isAdmin = user?.ruolo === 'amministratore';
