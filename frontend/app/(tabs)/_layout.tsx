@@ -80,14 +80,7 @@ export default function TabsLayout() {
         headerTitleStyle: {
           fontWeight: '600',
         },
-        headerRight: () => (
-          <TouchableOpacity 
-            onPress={handleLogout} 
-            style={{ marginRight: 16 }}
-          >
-            <Ionicons name="log-out-outline" size={24} color="#fff" />
-          </TouchableOpacity>
-        ),
+        headerRight: HeaderRight,
       }}
     >
       <Tabs.Screen
