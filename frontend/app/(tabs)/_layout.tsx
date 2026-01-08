@@ -17,14 +17,14 @@ export default function TabsLayout() {
     try {
       // Prima effettua il logout
       await logout();
+      // Usa router.replace invece di window.location.href
+      // Questo è compatibile con Expo Router
+      router.replace('/');
     } catch (error) {
       console.error('Logout error:', error);
+      // In caso di errore, forza comunque il redirect
+      router.replace('/');
     }
-    // Poi fai il redirect dopo un piccolo delay
-    // Questo evita che il redirect avvenga durante il ciclo di render
-    setTimeout(() => {
-      window.location.href = '/';
-    }, 50);
   };
 
   if (isLoading || !isInitialized) {
