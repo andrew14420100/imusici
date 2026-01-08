@@ -28,7 +28,8 @@ export default function TabsLayout() {
   }
 
   if (!isAuthenticated) {
-    // Show loading while redirecting
+    // Invece di fare redirect, mostriamo un messaggio
+    // Il logout gestirà il redirect manualmente
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#4A90D9" />
