@@ -7,20 +7,20 @@ import { View, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-nat
 
 export default function TabsLayout() {
   const { user, isLoading, isInitialized, isAuthenticated, logout } = useAuth();
-  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     console.log('Logout initiated...');
-    setIsLoggingOut(true);
-    await logout();
-    // Forza reload completo della pagina
+    // Non usare async/await - fai tutto in modo sincrono
+    logout().catch(err => console.error('Logout error:', err));
+    // Reload immediatamente senza aspettare
     if (typeof window !== 'undefined') {
-      window.location.href = '/';
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 50);
     }
   };
 
-  // Durante il logout, mostra solo loading senza controllare isAuthenticated
-  if (isLoading || !isInitialized || isLoggingOut) {
+  if (isLoading || !isInitialized) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#4A90D9" />
@@ -28,8 +28,7 @@ export default function TabsLayout() {
     );
   }
 
-  // Se non autenticato E non stiamo facendo logout, non renderizzare nulla
-  // Questo impedisce i loop di redirect
+  // Se non autenticato, non renderizzare nulla
   if (!isAuthenticated) {
     return null;
   }
