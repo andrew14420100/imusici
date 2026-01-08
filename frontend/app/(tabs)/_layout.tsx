@@ -7,25 +7,31 @@ import { View, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-nat
 
 export default function TabsLayout() {
   const { user, isLoading, isInitialized, isAuthenticated, logout } = useAuth();
+  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
 
   const handleLogout = async () => {
     console.log('Logout initiated...');
+    setIsLoggingOut(true);
     await logout();
-    // Usa location.reload per forzare un refresh completo della pagina
-    // Questo evita i loop infiniti di Expo Router
+    // Forza reload completo della pagina
     if (typeof window !== 'undefined') {
-      window.location.reload();
+      window.location.href = '/';
     }
   };
 
-  // Non fare alcun controllo di autenticazione qui
-  // Lascia che sia il root layout a gestirlo
-  if (isLoading || !isInitialized) {
+  // Durante il logout, mostra solo loading senza controllare isAuthenticated
+  if (isLoading || !isInitialized || isLoggingOut) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#4A90D9" />
       </View>
     );
+  }
+
+  // Se non autenticato E non stiamo facendo logout, non renderizzare nulla
+  // Questo impedisce i loop di redirect
+  if (!isAuthenticated) {
+    return null;
   }
 
   const isAdmin = user?.ruolo === 'amministratore';
