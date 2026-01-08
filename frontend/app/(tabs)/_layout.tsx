@@ -11,7 +11,11 @@ export default function TabsLayout() {
   const handleLogout = async () => {
     console.log('Logout initiated...');
     await logout();
-    // Il redirect sarà gestito dal root layout
+    // Usa location.reload per forzare un refresh completo della pagina
+    // Questo evita i loop infiniti di Expo Router
+    if (typeof window !== 'undefined') {
+      window.location.reload();
+    }
   };
 
   // Non fare alcun controllo di autenticazione qui
