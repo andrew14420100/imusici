@@ -206,49 +206,11 @@ export default function DashboardScreen() {
             <Text style={styles.infoTitle}>Area Personale</Text>
             <Text style={styles.infoText}>
               Usa le tab in basso per navigare tra le diverse sezioni:{"\n\n"}
-              • <Text style={styles.bold}>Corsi</Text> - I tuoi corsi e lezioni{"\n"}
+              • <Text style={styles.bold}>Presenze</Text> - Le tue presenze e assenze{"\n"}
               • <Text style={styles.bold}>Pagamenti</Text> - Le tue quote{"\n"}
               • <Text style={styles.bold}>Avvisi</Text> - Notifiche e comunicazioni
             </Text>
           </View>
-          
-          {/* Logout Button for Non-Admin */}
-          <View style={styles.logoutSection}>
-            <TouchableOpacity 
-              style={styles.logoutButton}
-              onPress={() => {
-                if (typeof window !== 'undefined') {
-                  window.location.href = '/';
-                }
-              }}
-            >
-              <Ionicons name="log-out-outline" size={20} color="#fff" />
-              <Text style={styles.logoutButtonText}>Esci</Text>
-            </TouchableOpacity>
-            <Text style={styles.logoutHint}>
-              Effettua il logout per tornare alla pagina di accesso
-            </Text>
-          </View>
-        </View>
-      )}
-
-      {/* Logout Button for Admin */}
-      {user?.ruolo === 'amministratore' && (
-        <View style={styles.logoutSection}>
-          <TouchableOpacity 
-            style={styles.logoutButton}
-            onPress={() => {
-              if (typeof window !== 'undefined') {
-                window.location.href = '/';
-              }
-            }}
-          >
-            <Ionicons name="log-out-outline" size={20} color="#fff" />
-            <Text style={styles.logoutButtonText}>Esci</Text>
-          </TouchableOpacity>
-          <Text style={styles.logoutHint}>
-            Effettua il logout per tornare alla pagina di accesso
-          </Text>
         </View>
       )}
 
