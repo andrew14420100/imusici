@@ -213,6 +213,24 @@ export default function DashboardScreen() {
         </View>
       )}
 
+      {/* Logout Button */}
+      <View style={styles.logoutSection}>
+        <TouchableOpacity 
+          style={styles.logoutButton}
+          onPress={() => {
+            if (typeof window !== 'undefined') {
+              window.location.href = '/';
+            }
+          }}
+        >
+          <Ionicons name="log-out-outline" size={20} color="#fff" />
+          <Text style={styles.logoutButtonText}>Esci</Text>
+        </TouchableOpacity>
+        <Text style={styles.logoutHint}>
+          Effettua il logout per tornare alla pagina di accesso
+        </Text>
+      </View>
+
       <View style={{ height: 30 }} />
     </ScrollView>
   );
