@@ -933,4 +933,65 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     flex: 1,
   },
+  // Stili per tabella riepilogo studente
+  summaryTable: {
+    backgroundColor: '#fff',
+    margin: 16,
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  tableTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1F2937',
+    marginBottom: 12,
+  },
+  tableContainer: {
+    borderRadius: 8,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  tableRow: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  tableCell: {
+    flex: 1,
+    padding: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tableCellHeader: {
+    backgroundColor: '#4A90D9',
+  },
+  tableCellHeaderText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 13,
+  },
+  tableCellText: {
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  tableCellValue: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1F2937',
+  },
+  historyTitleStudent: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1F2937',
+    marginHorizontal: 16,
+    marginTop: 8,
+    marginBottom: 8,
+  },
 });
